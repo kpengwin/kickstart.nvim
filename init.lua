@@ -27,7 +27,7 @@
 ]]
 
 -- NOTE: must be first so leader is correct
-require 'kennebru.plugins.remap'
+require 'kennebru.remap'
 
 vim.g.have_nerd_font = true
 -- See `:help vim.opt`
