@@ -56,6 +56,8 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
+vim.opt.termguicolors = true
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
