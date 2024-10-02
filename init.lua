@@ -105,6 +105,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'kennebru.plugins.harpoon',
   require 'kennebru.plugins.markdown',
+  require 'kennebru.plugins.vim-tmux-navigator',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
