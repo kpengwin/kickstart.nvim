@@ -108,6 +108,7 @@ require('lazy').setup({
   require 'kennebru.plugins.harpoon',
   require 'kennebru.plugins.markdown',
   require 'kennebru.plugins.vim-tmux-navigator',
+  require 'kennebru.plugins.dropbar',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
