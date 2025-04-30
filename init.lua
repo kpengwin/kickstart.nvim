@@ -58,6 +58,8 @@ vim.opt.scrolloff = 10
 
 vim.opt.termguicolors = true
 
+
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -109,6 +111,7 @@ require('lazy').setup({
   require 'kennebru.plugins.markdown',
   require 'kennebru.plugins.vim-tmux-navigator',
   require 'kennebru.plugins.dropbar',
+  require 'amazon.plugins.AmazonQNvim'
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
