@@ -169,7 +169,7 @@ return {
         clangd = {},
         -- gopls = {},
         -- rust_analyzer = {},
-        pyright = {},
+        -- pyright = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -223,6 +223,30 @@ return {
           end,
         },
       }
+    end,
+  },
+  {
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    config = function()
+      require("lsp_lines").setup()
+
+      -- Create a toggle function
+      vim.keymap.set("n", "<Leader>ll", function()
+        local new_value = not vim.diagnostic.config().virtual_lines
+        vim.diagnostic.config({ virtual_lines = new_value })
+      end, { desc = "Toggle LSP Lines" })
+
+      -- Disable virtual_text since it's redundant due to virtual lines
+      vim.diagnostic.config({
+        virtual_text = false,
+        virtual_lines = true,
+      })
+
+      -- Optional: Configure diagnostic signs
+      vim.fn.sign_define("DiagnosticSignError", { text = "✘", texthl = "DiagnosticSignError" })
+      vim.fn.sign_define("DiagnosticSignWarn", { text = "▲", texthl = "DiagnosticSignWarn" })
+      vim.fn.sign_define("DiagnosticSignInfo", { text = "►", texthl = "DiagnosticSignInfo" })
+      vim.fn.sign_define("DiagnosticSignHint", { text = "⚑", texthl = "DiagnosticSignHint" })
     end,
   },
 
