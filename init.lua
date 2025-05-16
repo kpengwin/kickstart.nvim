@@ -74,6 +74,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = "fugitiveblame",
+--   callback = function()
+--     vim.bo.modifiable = true
+--     -- Insert a blank line at the top of the buffer
+--     vim.api.nvim_buf_set_lines(0, 0, 0, false, {""})
+--     vim.bo.modifiable = false
+--   end,
+-- })
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -111,7 +121,8 @@ require('lazy').setup({
   require 'kennebru.plugins.markdown',
   require 'kennebru.plugins.vim-tmux-navigator',
   require 'kennebru.plugins.dropbar',
-  require 'amazon.plugins.AmazonQNvim'
+  require 'kennebru.plugins.fugitive',
+  require 'amazon.plugins.AmazonQNvim',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
