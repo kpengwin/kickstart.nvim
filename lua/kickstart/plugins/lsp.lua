@@ -226,28 +226,58 @@ return {
     end,
   },
   {
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
     config = function()
-      require("lsp_lines").setup()
+      require('lsp_lines').setup()
 
       -- Create a toggle function
-      vim.keymap.set("n", "<Leader>ll", function()
+      vim.keymap.set('n', '<Leader>ll', function()
         local new_value = not vim.diagnostic.config().virtual_lines
-        vim.diagnostic.config({ virtual_lines = new_value })
-      end, { desc = "Toggle LSP Lines" })
+        vim.diagnostic.config { virtual_lines = new_value }
+      end, { desc = 'Toggle LSP Lines' })
 
       -- Disable virtual_text since it's redundant due to virtual lines
-      vim.diagnostic.config({
+      vim.diagnostic.config {
         virtual_text = false,
         virtual_lines = true,
-      })
+      }
 
       -- Optional: Configure diagnostic signs
-      vim.fn.sign_define("DiagnosticSignError", { text = "✘", texthl = "DiagnosticSignError" })
-      vim.fn.sign_define("DiagnosticSignWarn", { text = "▲", texthl = "DiagnosticSignWarn" })
-      vim.fn.sign_define("DiagnosticSignInfo", { text = "►", texthl = "DiagnosticSignInfo" })
-      vim.fn.sign_define("DiagnosticSignHint", { text = "⚑", texthl = "DiagnosticSignHint" })
+      -- deprecated way
+      -- vim.fn.sign_define('DiagnosticSignError', { text = '✘', texthl = 'DiagnosticSignError' })
+      -- vim.fn.sign_define('DiagnosticSignWarn', { text = '▲', texthl = 'DiagnosticSignWarn' })
+      -- vim.fn.sign_define('DiagnosticSignInfo', { text = '►', texthl = 'DiagnosticSignInfo' })
+      -- vim.fn.sign_define('DiagnosticSignHint', { text = '⚑', texthl = 'DiagnosticSignHint' })
+
+      -- New way for nvim 0.11
+      vim.diagnostic.config {
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = '✘',
+            [vim.diagnostic.severity.WARN] = '▲',
+            [vim.diagnostic.severity.INFO] = '►',
+            [vim.diagnostic.severity.HINT] = '⚑',
+          },
+          texthl = {
+            [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+            [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+            [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+            [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+          },
+        },
+      }
     end,
+  },
+
+  {
+    'ray-x/lsp_signature.nvim',
+    event = 'InsertEnter',
+    opts = {
+      bind = true,
+      handler_opts = {
+        border = 'rounded',
+      },
+    },
   },
 
   { -- Autoformat
@@ -334,6 +364,9 @@ return {
           expand = function(args)
             luasnip.lsp_expand(args.body)
           end,
+        },
+        experimental = {
+          ghost_text = true,
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
