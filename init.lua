@@ -105,10 +105,12 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-  require 'kennebru.plugins.harpoon',
+  -- require 'kennebru.plugins.harpoon',
+  require 'kennebru.plugins.marks',
   require 'kennebru.plugins.markdown',
   require 'kennebru.plugins.vim-tmux-navigator',
   require 'kennebru.plugins.dropbar',
+  require 'kennebru.plugins.nvim-dap',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
