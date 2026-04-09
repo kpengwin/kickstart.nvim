@@ -30,10 +30,11 @@
 require 'kennebru.remap'
 
 vim.g.have_nerd_font = true
+
 -- See `:help vim.opt`
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.mouse = 'a' -- = Mouse mode on
+vim.opt.mouse = 'a' -- Mouse mode on
 vim.opt.showmode = false -- Already have in status line
 
 -- Share clipboard with OS = yes
@@ -62,8 +63,6 @@ vim.opt.termguicolors = true
 --  See `:help lua-guide-autocommands`
 
 -- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -72,68 +71,113 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.uv.fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-  if vim.v.shell_error ~= 0 then
-    error('Error cloning lazy.nvim:\n' .. out)
-  end
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
+-- [[ Plugin Management with vim.pack ]]
+--    See `:help vim.pack` for more info
 
--- [[ Configure and install plugins ]]
---    :Lazy
---    :Lazy update
-require('lazy').setup({
+-- Helper for GitHub URLs
+local gh = function(x) return 'https://github.com/' .. x end
 
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-
-  require 'kickstart.plugins.gitsigns',
-  require 'kickstart.plugins.which-key',
-  require 'kickstart.plugins.telescope',
-  require 'kickstart.plugins.lsp',
-  require 'kickstart.plugins.colorscheme',
-  require 'kickstart.plugins.todo-comments',
-  require 'kickstart.plugins.mini',
-  require 'kickstart.plugins.tree-sitter',
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-  -- require 'kennebru.plugins.harpoon',
-  require 'kennebru.plugins.marks',
-  require 'kennebru.plugins.markdown',
-  require 'kennebru.plugins.vim-tmux-navigator',
-  require 'kennebru.plugins.dropbar',
-  require 'kennebru.plugins.nvim-dap',
-}, {
-  ui = {
-    -- If you are using a Nerd Font: set icons to an empty table which will use the
-    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
-    },
-  },
+-- Set up PackChanged autocmd for build scripts (runs on install/update)
+vim.api.nvim_create_autocmd('PackChanged', {
+  callback = function(ev)
+    local name, kind, path = ev.data.spec.name, ev.data.kind, ev.data.path
+    if kind == 'install' or kind == 'update' then
+      if name == 'telescope-fzf-native' then
+        vim.system({ 'make' }, { cwd = path }):wait()
+      end
+      if name == 'nvim-web-devicons' then
+        vim.system({ 'make' }, { cwd = path }):wait()
+      end
+      if name == 'luasnip' then
+        if vim.fn.executable('make') == 1 then
+          vim.system({ 'make', 'install_jsregexp' }, { cwd = path }):wait()
+        end
+      end
+    end
+  end,
 })
 
-require 'kennebru.lang.jack'
+-- Add all plugins with vim.pack
+vim.pack.add({
+  -- Core utilities
+  gh('tpope/vim-sleuth'),
+
+  -- Colorscheme (load first)
+  gh('kepano/flexoki-neovim'),
+
+  -- Telescope and deps
+  gh('nvim-telescope/telescope.nvim'),
+  gh('nvim-lua/plenary.nvim'),
+  { src = gh('nvim-telescope/telescope-fzf-native.nvim'), name = 'telescope-fzf-native' },
+  gh('nvim-telescope/telescope-ui-select.nvim'),
+  gh('nvim-tree/nvim-web-devicons'),
+
+  -- LSP ecosystem
+  gh('neovim/nvim-lspconfig'),
+  gh('williamboman/mason.nvim'),
+  gh('williamboman/mason-lspconfig.nvim'),
+  gh('WhoIsSethDaniel/mason-tool-installer.nvim'),
+  gh('hrsh7th/cmp-nvim-lsp'),
+  gh('hrsh7th/nvim-cmp'),
+  { src = gh('L3MON4D3/LuaSnip'), name = 'luasnip' },
+  gh('saadparwaiz1/cmp_luasnip'),
+  gh('hrsh7th/cmp-path'),
+
+  -- Treesitter
+  gh('nvim-treesitter/nvim-treesitter'),
+
+  -- Git
+  gh('lewis6991/gitsigns.nvim'),
+
+  -- UI
+  gh('folke/which-key.nvim'),
+  gh('nvim-neo-tree/neo-tree.nvim'),
+  gh('MunifTanjim/nui.nvim'),
+  gh('folke/todo-comments.nvim'),
+
+  -- Formatting
+  gh('stevearc/conform.nvim'),
+
+  -- Mini suite
+  gh('echasnovski/mini.nvim'),
+
+  -- Autopairs
+  gh('windwp/nvim-autopairs'),
+
+  -- LSP extras
+  gh('ray-x/lsp_signature.nvim'),
+  'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+
+  -- Debugging
+  gh('mfussenegger/nvim-dap'),
+  gh('nvim-neotest/nvim-nio'),
+  gh('rcarriga/nvim-dap-ui'),
+  gh('mfussenegger/nvim-dap-python'),
+  gh('theHamsta/nvim-dap-virtual-text'),
+
+  -- Other utilities
+  gh('chentoast/marks.nvim'),
+  gh('MeanderingProgrammer/render-markdown.nvim'),
+  gh('christoomey/vim-tmux-navigator'),
+  gh('Bekaboo/dropbar.nvim'),
+})
+
+-- Configure all plugins
+require('kennebru.plugins.colorscheme')()
+require('kennebru.plugins.which-key')()
+require('kennebru.plugins.telescope')()
+require('kennebru.plugins.lsp')()
+require('kennebru.plugins.gitsigns')()
+require('kennebru.plugins.todo-comments')()
+require('kennebru.plugins.mini')()
+require('kennebru.plugins.tree-sitter')()
+require('kennebru.plugins.autopairs')()
+require('kennebru.plugins.neo-tree')()
+require('kennebru.plugins.marks')()
+require('kennebru.plugins.markdown')()
+require('kennebru.plugins.vim-tmux-navigator')()
+require('kennebru.plugins.dropbar')()
+require('kennebru.plugins.nvim-dap')()
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
