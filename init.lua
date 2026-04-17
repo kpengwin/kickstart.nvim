@@ -160,6 +160,9 @@ vim.pack.add({
   gh('MeanderingProgrammer/render-markdown.nvim'),
   gh('christoomey/vim-tmux-navigator'),
   gh('Bekaboo/dropbar.nvim'),
+
+  -- Smear cursor
+  gh('sphamba/smear-cursor.nvim'),
 })
 
 -- Configure all plugins
@@ -178,6 +181,7 @@ require('kennebru.plugins.markdown')()
 require('kennebru.plugins.vim-tmux-navigator')()
 require('kennebru.plugins.dropbar')()
 require('kennebru.plugins.nvim-dap')()
+require('kennebru.plugins.smear-cursor')()
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
